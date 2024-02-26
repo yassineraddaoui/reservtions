@@ -1,6 +1,7 @@
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const jwt = require("jsonwebtoken");
+const jwtHelper = require('../utils/JWTUtils')
 
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10).then(
@@ -8,12 +9,14 @@ exports.signup = (req, res, next) => {
         const user = new User({
           username:req.body.username,
           email: req.body.email,
-          password: hash
+          password: hash,
+          role: req.body.role
         });
         user.save().then(
           () => {
             res.status(201).json({
-              message: 'User added successfully!'
+              message: 'User added successfully!',
+              token:jwtHelper.generateToken(user)
             });
           }
         ).catch(
@@ -44,15 +47,7 @@ exports.signup = (req, res, next) => {
             }
             let tk;
         try {
-            //Creating jwt token
-            tk = jwt.sign(
-                {
-                    id: user.id,
-                    email: user.email
-                },
-                process.env.SECRET_KEY,
-                { expiresIn: "1h" }
-            );
+            tk = jwtHelper.generateToken(user)
         } catch (err) {
             console.log(err);
             const error =

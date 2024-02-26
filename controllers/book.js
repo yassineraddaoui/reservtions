@@ -36,7 +36,7 @@ exports.createBook = async (req, res, next) => {
 
         // Book the room for the specified hours
         const token = req.headers.authorization;
-        let id = jwtHelper(token).id
+        let id = jwtHelper.getId(token).id
         const book = new Book({
             user: id,
             dates: hours,

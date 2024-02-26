@@ -1,26 +1,17 @@
 const jwt = require('jsonwebtoken');
-
+const jwtHelper = require('../utils/JWTUtils')
 function jwtCheck(req, res, next) {
     const token = req.headers.authorization;
-
-    // Check if the token exists
-    if (!token) {
-        return res.status(401).json({
-            success: false,
-            message: "Error! Token was not provided."
-        });
-    }
-
+    
     try {
-        const tokenValue = token.split(' ')[1];
-        const decodedToken = jwt.verify(tokenValue, process.env.SECRET_KEY);
-
-        req.userData = {
-            userId: decodedToken.userId,
-            email: decodedToken.email
-        };
-
-        next(); 
+        if (jwtHelper.verifyToken(token))
+            next();
+        else {
+            return res.status(401).json({
+                success: false,
+                message: "Error! Token was not provided."
+            });
+        }
     } catch (error) {
         return res.status(401).json({
             success: false,
