@@ -1,17 +1,18 @@
-const jwt = require('jsonwebtoken');
 const jwtHelper = require('../utils/JWTUtils')
-function jwtCheck(req, res, next) {
-    console.log("JWT check !")
 
-    const token = req.headers.authorization;
-    
+const verifyRole = (requiredRole) => (req, res, next) => {
     try {
-        if (jwtHelper.verifyToken(token))
+        const token = req.headers.authorization;
+        console.log("Role check middleware !")
+
+        if (jwtHelper.getDecodedToken(token).role=requiredRole)
+        {
             next();
+        }
         else {
             return res.status(401).json({
                 success: false,
-                message: "Error! Token was not provided."
+                message: "Unauthorized."
             });
         }
     } catch (error) {
@@ -22,4 +23,4 @@ function jwtCheck(req, res, next) {
     }
 }
 
-module.exports = jwtCheck;
+module.exports = verifyRole;
