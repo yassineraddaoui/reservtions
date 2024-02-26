@@ -25,28 +25,31 @@ exports.createBook = async (req, res, next) => {
         }
 
         // // Check if the room is available for the specified hours
-        // const isRoomAvailable = await checkRoomAvailability(room, hours);
+         const isRoomAvailable = await checkRoomAvailability(room, hours);
 
-        // if (!isRoomAvailable) {
-        //     return res.status(409).json({
-        //         success: false,
-        //         message: "Room is not available for the specified hours."
-        //     });
-        // }
+        if (!isRoomAvailable) {
+            return res.status(409).json({
+                success: false,
+                message: "Room is not available for the specified hours."
+            });
+        }
 
         // Book the room for the specified hours
         const token = req.headers.authorization;
-        room.bookings.push({
-            user: jwtHelper(token).userId,
-            hours: hours
-        });
+        let id = jwtHelper(token).id
+        const book = new Book({
+            user: id,
+            dates: hours,
+            room: roomNumber,
+            bookingDate: new Date()
+          });
 
-        await room.save();
+        await book.save();
 
         return res.status(201).json({
             success: true,
             message: "Room booked successfully.",
-            bookedRoom: room
+            bookedRoom: book
         });
     } catch (error) {
         return res.status(500).json({
@@ -54,4 +57,18 @@ exports.createBook = async (req, res, next) => {
             message: `Could not book room: ${error.message}`
         });
     }
+}
+
+async function checkRoomAvailability(roomId, hours) {
+    // Convert the hours array to an array of Date objects
+    const dateArray = hours.map(dateString => new Date(dateString));
+
+    // Check if there are any bookings for the room within the specified time range
+    const conflictingBookings = await Book.find({
+        room: roomId,
+        dates: { $in: dateArray }
+    });
+
+    // If there are conflicting bookings, the room is not available
+    return conflictingBookings.length === 0;
 }

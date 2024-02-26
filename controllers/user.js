@@ -47,6 +47,7 @@ exports.signup = (req, res, next) => {
             //Creating jwt token
             tk = jwt.sign(
                 {
+                    id: user.id,
                     email: user.email
                 },
                 process.env.SECRET_KEY,
