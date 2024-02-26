@@ -14,7 +14,7 @@ const bookRoute = require('./routes/book');
 const connectDB = require('./utils/db');
 
 app.use("/auth",userRoute)
-app.use(jwtCheck); // after Auth requests.
+app.use(jwtCheck); 
 app.use("/room",roomRoute)
 app.use("/book",bookRoute)
 

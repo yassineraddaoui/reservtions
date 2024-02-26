@@ -1,11 +1,14 @@
 const express = require("express");
 const roomController = require("../controllers/room");
-const rolecheck=require('../middleware/roleCheck')
 const router = express.Router();
 
 router.get('/', roomController.getAllRooms);
 
-router.get('/:roomNumber', roomController.getRoomById);
+router.post('/available',roomController.getAvailableRooms);
+
+router.get('/:roomNumber', roomController.getRoomByRoomNumber);
+
+router.get('/id/:id', roomController.getRoomById);
 
 router.post('/', roomController.createRoom);
 

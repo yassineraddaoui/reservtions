@@ -1,11 +1,11 @@
 const Book = require('../models/booking');
-const Room=require('../models/room')
-const jwtHelper = require('../utils/JWTUtils')
+const Room = require('../models/room');
+const jwtHelper = require('../utils/JWTUtils');
+
 exports.createBook = async (req, res, next) => {
     try {
         const { roomNumber, hours } = req.body;
 
-        // Check if roomNumber and hours are provided
         if (!roomNumber || !hours || !Array.isArray(hours) || hours.length === 0) {
             return res.status(400).json({
                 success: false,
@@ -13,8 +13,7 @@ exports.createBook = async (req, res, next) => {
             });
         }
 
-        // Retrieve the room from the database
-        const room = await Room.findById(roomNumber);
+        const room = await Room.findOne({ roomNumber: roomNumber });
 
         // Check if the room exists
         if (!room) {
@@ -24,8 +23,8 @@ exports.createBook = async (req, res, next) => {
             });
         }
 
-        // // Check if the room is available for the specified hours
-         const isRoomAvailable = await checkRoomAvailability(room, hours);
+        // Check if the room is available for the specified hours
+        const isRoomAvailable = await checkRoomAvailability(room._id, hours);
 
         if (!isRoomAvailable) {
             return res.status(409).json({
@@ -36,13 +35,13 @@ exports.createBook = async (req, res, next) => {
 
         // Book the room for the specified hours
         const token = req.headers.authorization;
-        let id = jwtHelper.getDecodedToken(token).id
+        const id = jwtHelper.getDecodedToken(token).id;
         const book = new Book({
             user: id,
             dates: hours,
-            room: roomNumber,
+            room: room._id,
             bookingDate: new Date()
-          });
+        });
 
         await book.save();
 
@@ -57,18 +56,22 @@ exports.createBook = async (req, res, next) => {
             message: `Could not book room: ${error.message}`
         });
     }
-}
+};
 
 async function checkRoomAvailability(roomId, hours) {
-    // Convert the hours array to an array of Date objects
-    const dateArray = hours.map(dateString => new Date(dateString));
+    try {
+        // Convert the hours array to an array of Date objects
+        const dateArray = hours.map(dateString => new Date(dateString));
 
-    // Check if there are any bookings for the room within the specified time range
-    const conflictingBookings = await Book.find({
-        room: roomId,
-        dates: { $in: dateArray }
-    });
+        // Check if there are any bookings for the room within the specified time range
+        const conflictingBookings = await Book.find({
+            room: roomId,
+            dates: { $in: dateArray }
+        });
 
-    // If there are conflicting bookings, the room is not available
-    return conflictingBookings.length === 0;
+        // If there are conflicting bookings, the room is not available
+        return conflictingBookings.length === 0;
+    } catch (error) {
+        throw new Error(`Could not check room availability: ${error.message}`);
+    }
 }
