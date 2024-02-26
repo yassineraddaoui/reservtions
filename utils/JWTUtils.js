@@ -1,7 +1,7 @@
 
 const jwt=require('jsonwebtoken')
 
-const getId = (token)=> {
+const getDecodedToken = (token)=> {
     const tokenValue = token.split(' ')[1];
     const decodedToken = jwt.verify(tokenValue, process.env.SECRET_KEY);    
     return decodedToken;
@@ -27,5 +27,5 @@ const verifyToken = (token)=>{
     jwt.verify(tokenValue, process.env.SECRET_KEY);
     return true;
 }
-module.exports = { generateToken, verifyToken,getId };
+module.exports = { generateToken, verifyToken,getDecodedToken };
 
