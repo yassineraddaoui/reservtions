@@ -1,11 +1,11 @@
 const express = require('express');
 const app = express();
 const bodyParser =require('body-parser')
-app.use(bodyParser.json());
 const jwtCheck=require('./middleware/jwtcheck')
-app.use(express.static('public'));
 require('dotenv').config();
 const PORT = process.env.PORT || 5000; 
+app.use(bodyParser.json());
+app.use(express.static('public'));
 
 
 const userRoute = require('./routes/user');
