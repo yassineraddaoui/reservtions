@@ -9,6 +9,10 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static('public/new'));
 app.set('view engine','ejs')
 
+const emailRouter = require('./controllers/mail'); 
+app.use('/api', emailRouter); 
+
+
 const anonymousRoute = require('./routes/anonymous');
 const authRoute = require('./routes/user');
 const roomRoute = require('./routes/room');
