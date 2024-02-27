@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs')
 const jwtHelper = require('../utils/JWTUtils')
 
 exports.signup = (req, res, next) => {
+  
     bcrypt.hash(req.body.password, 10).then(
       (hash) => {
         const user = new User({
@@ -47,7 +48,8 @@ exports.signup = (req, res, next) => {
             let tk;
         try {
             tk = jwtHelper.generateToken(user)
-        } catch (err) {
+            res.cookie('token', tk)
+          } catch (err) {
             console.log(err);
             const error =
                 new Error("Error! Something went wrong.");
