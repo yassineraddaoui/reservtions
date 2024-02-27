@@ -20,11 +20,12 @@ const generateToken = (user)=>{
     );
 }
 const verifyToken = (token)=>{
+    token="Bearer "+token
     if (!token) {
         return false;
     }
-
     const tokenValue = token.split(' ')[1];
+
     jwt.verify(tokenValue, process.env.SECRET_KEY);
     return true;
 }

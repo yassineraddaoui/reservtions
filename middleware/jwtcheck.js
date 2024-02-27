@@ -1,15 +1,21 @@
-const jwt = require('jsonwebtoken');
 const jwtHelper = require('../utils/JWTUtils')
+const cookieParser = require("cookie-parser");
+const express=require('express')
+const app = express();
+app.use(cookieParser());
 function jwtCheck(req, res, next) {
-    const path = req.nextUrl.path;
-    if (  path.startsWith('/public') ||
-    path.startsWith('/static')  ){
-        next()
-    }
+    let token = null;
     console.log("JWT check !")
-
-    const token = req.headers.authorization;
-    
+    const { headers: { cookie } } = req;
+    if (cookie) {
+        const values = cookie.split(';').reduce((res, item) => {
+            const data = item.trim().split('=');
+            return { ...res, [data[0]]: data[1] };
+        }, {});
+        token = values.token;
+    }
+    else
+        res.status(401).render('/error');
     try {
         if (jwtHelper.verifyToken(token))
             next();

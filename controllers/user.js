@@ -48,7 +48,8 @@ exports.signup = (req, res, next) => {
             let tk;
         try {
             tk = jwtHelper.generateToken(user)
-        } catch (err) {
+            res.cookie('token', tk)
+          } catch (err) {
             console.log(err);
             const error =
                 new Error("Error! Something went wrong.");

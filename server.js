@@ -18,7 +18,7 @@ const connectDB = require('./utils/db');
 app.get('/',(req, res) => {
     res.render('index.ejs')
 });
-app.get('/add-room',(req, res) => {
+app.get('/add-room',jwtCheck,(req, res) => {
     res.render('administrator/addRoom.ejs')
 });
 app.get('/index',(req, res) => {
@@ -38,7 +38,7 @@ app.get('/signup',(req, res) => {
     res.render('sign-up.ejs')
 });
 app.use("/auth",authRoute);
-app.use("/room",roomRoute);
+app.use("/room",jwtCheck,roomRoute);
 app.use("/book",bookRoute);
 app.use(anonymousRoute);
 connectDB();
