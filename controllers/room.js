@@ -1,12 +1,13 @@
 const Room = require('../models/room');
 const Book = require('../models/booking');
-
 exports.createRoom = async (req, res) => {
   try {
     const room = new Room({
       capacity: req.body.capacity,
-      roomNumber: req.body.roomNumber
+      roomNumber: req.body.roomNumber,
+      roomImage:req.file.path
     });
+
     const savedRoom = await room.save();
     res.status(201).json(savedRoom);
   } catch (error) {

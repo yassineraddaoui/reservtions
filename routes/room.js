@@ -1,6 +1,8 @@
 const express = require("express");
 const roomController = require("../controllers/room");
 const router = express.Router();
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 
 router.get('/', roomController.getAllRooms);
 
@@ -10,7 +12,7 @@ router.get('/:roomNumber', roomController.getRoomByRoomNumber);
 
 router.get('/id/:id', roomController.getRoomById);
 
-router.post('/', roomController.createRoom);
+router.post('/',upload.single('roomImage') ,roomController.createRoom);
 
 router.patch('/:roomNumber', roomController.updateRoom);
 
