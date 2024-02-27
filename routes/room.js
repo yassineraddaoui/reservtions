@@ -2,7 +2,7 @@ const express = require("express");
 const roomController = require("../controllers/room");
 const router = express.Router();
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ dest: "public/new/uploads/" });
 
 router.get('/', roomController.getAllRooms);
 

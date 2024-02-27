@@ -9,8 +9,8 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static('public/new'));
 app.set('view engine','ejs')
 
-
-const userRoute = require('./routes/user');
+const anonymousRoute = require('./routes/anonymous');
+const authRoute = require('./routes/user');
 const roomRoute = require('./routes/room');
 const bookRoute = require('./routes/book');
 const connectDB = require('./utils/db');
@@ -19,7 +19,7 @@ app.get('/',(req, res) => {
     res.render('index.ejs')
 });
 app.get('/add-room',(req, res) => {
-    res.render('administrator/rooms.ejs')
+    res.render('administrator/addRoom.ejs')
 });
 app.get('/index',(req, res) => {
     res.render('index.ejs')
@@ -37,10 +37,10 @@ app.get('/signin',(req, res) => {
 app.get('/signup',(req, res) => {
     res.render('sign-up.ejs')
 });
-app.use("/auth",userRoute)
-app.use("/room",roomRoute)
-app.use("/book",bookRoute)
-
+app.use("/auth",authRoute);
+app.use("/room",roomRoute);
+app.use("/book",bookRoute);
+app.use(anonymousRoute);
 connectDB();
 
 app.listen(PORT, () => {

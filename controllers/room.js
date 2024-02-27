@@ -5,7 +5,7 @@ exports.createRoom = async (req, res) => {
     const room = new Room({
       capacity: req.body.capacity,
       roomNumber: req.body.roomNumber,
-      roomImage:req.file.path
+      roomImage:req.file.path.replace("public\\new\\", "")
     });
 
     const savedRoom = await room.save();
