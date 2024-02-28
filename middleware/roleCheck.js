@@ -1,5 +1,4 @@
 const jwtHelper = require('../utils/JWTUtils')
-
 const verifyRole = (requiredRole) => (req, res, next) => {
     console.log("Check Roles")
     try {
@@ -18,7 +17,7 @@ const verifyRole = (requiredRole) => (req, res, next) => {
             res.render('404');
         }
     } catch (error) {
-        res.render('404');
+        next(error)
     }
 }
 

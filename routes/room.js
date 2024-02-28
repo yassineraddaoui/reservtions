@@ -9,7 +9,8 @@ const isLoggedIn = require('../middleware/jwtcheck')
 
 router.get('/', roomController.getAllRooms);
 
-router.get('/add',isAdmin('admin') ,roomController.getAddRoomForm);
+router.get('/add',isAdmin('admin') 
+    ,roomController.getAddRoomForm);
 
 router.post('/available',isLoggedIn ,roomController.getAvailableRooms);
 

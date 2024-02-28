@@ -1,13 +1,16 @@
 const express = require('express');
 const app = express();
 const bodyParser =require('body-parser')
+app.use(express.static('public/new'));
+app.set('view engine','ejs')
+
 const jwtCheck=require('./middleware/jwtcheck')
+const errorHandler = require("./middleware/errorHandler");
+
 require('dotenv').config();
 const PORT = process.env.PORT || 5000; 
 app.use(bodyParser.urlencoded({extended:true})); 
 
-app.use(express.static('public/new'));
-app.set('view engine','ejs')
 
 const emailRouter = require('./controllers/mail'); 
 app.use('/api', emailRouter); 
@@ -26,6 +29,7 @@ app.use(anonymousRoute);
 const connectDB = require('./utils/db');
 connectDB();
 
+app.use(errorHandler)
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
