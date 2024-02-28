@@ -2,12 +2,11 @@ const jwtHelper = require('../utils/JWTUtils')
 
 const verifyRole = (requiredRole) => (req, res, next) => {
     console.log("Check Roles")
-    const token=jwtHelper.extractJwt(req);
-    console.log(jwtHelper.getDecodedToken(token))
     try {
+        const token=jwtHelper.extractJwt(req);  
+
         if (jwtHelper.verifyToken(token)){
-            if (jwtHelper.getDecodedToken(token).role=requiredRole)
-            {
+            if (jwtHelper.getDecodedToken(token).role==requiredRole){
                 next();
             }
             else {
