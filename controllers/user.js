@@ -2,6 +2,22 @@ const User = require('../models/user')
 const bcrypt = require('bcryptjs')
 const jwtHelper = require('../utils/JWTUtils')
 
+exports.loginForm = async (req, res) => {
+  try {
+      res.render('sign-in');
+  } catch (err) {
+      console.error(err);
+      res.status(500).send('Internal Server Error 500');
+  }
+}
+exports.signupForm = async (req, res) => {
+  try {
+      res.render('sign-up');
+  } catch (err) {
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+  }
+}
 exports.signup = (req, res, next) => {
   
     bcrypt.hash(req.body.password, 10).then(
