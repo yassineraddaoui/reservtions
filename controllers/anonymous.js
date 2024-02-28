@@ -1,13 +1,5 @@
 const Room = require('../models/room');
-exports.getRooms = async (req, res) => {
-    try {
-        const rooms = await Room.find();
-        res.render('rooms', { rooms: rooms });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
-    }
-}
+
 exports.getAbout = async (req, res) => {
     try {
         res.render('about');

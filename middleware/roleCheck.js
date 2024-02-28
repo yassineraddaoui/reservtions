@@ -1,25 +1,25 @@
 const jwtHelper = require('../utils/JWTUtils')
 
 const verifyRole = (requiredRole) => (req, res, next) => {
+    console.log("Check Roles")
+    const token=jwtHelper.extractJwt(req);
+    console.log(jwtHelper.getDecodedToken(token))
     try {
-        const token = req.headers.authorization;
-        console.log("Role check middleware !")
-
-        if (jwtHelper.getDecodedToken(token).role=requiredRole)
-        {
-            next();
+        if (jwtHelper.verifyToken(token)){
+            if (jwtHelper.getDecodedToken(token).role=requiredRole)
+            {
+                next();
+            }
+            else {
+                res.render('404');
+            }
+    
         }
         else {
-            return res.status(401).json({
-                success: false,
-                message: "Unauthorized."
-            });
+            res.render('404');
         }
     } catch (error) {
-        return res.status(401).json({
-            success: false,
-            message: "Invalid token."
-        });
+        res.render('404');
     }
 }
 

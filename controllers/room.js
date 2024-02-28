@@ -23,10 +23,19 @@ exports.getRoomById = async(req,res)=>{
     res.status(404).json({ error: error.message });
   }
 }
+
+exports.getAddRoomForm = async (req, res) => {
+  try {
+    return res.render('administrator/addRoom') 
+  } catch (error) {
+    return res.render('404') 
+
+  }
+};
 exports.getAllRooms = async (req, res) => {
   try {
     const rooms = await Room.find();
-    res.status(200).json(rooms); 
+    res.render('rooms', { rooms: rooms }); 
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -49,11 +58,9 @@ exports.getAvailableRooms = async (req, res) => {
     endOfDay.setUTCHours (18, 0, 0, 0); // Set end time to 5:00 PM
     const availableRooms = [];
 
-    // Iterate over each hour between start and end of the day
     const rooms = await Room.find();
     for(const room of rooms){
     for (let hour = new Date(startOfDay); hour < endOfDay; hour.setHours(hour.getHours() + 1)) {
-      // Check room availability for the current hour
       console.log(hour)
       const isRoomAvailable = await checkRoomAvailability(room._id,hour);
 

@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-const connectDB = require('./utils/db');
 const bodyParser =require('body-parser')
 const jwtCheck=require('./middleware/jwtcheck')
 require('dotenv').config();
@@ -18,15 +17,13 @@ const anonymousRoute = require('./routes/anonymous');
 const authRoute = require('./routes/user');
 const roomRoute = require('./routes/room');
 const bookRoute = require('./routes/book');
-const adminRoute = require('./routes/admin');
 
 
 app.use(authRoute);
-app.use("/room",jwtCheck,roomRoute);
-app.use("/book",bookRoute);
-app.use("/admin",adminRoute);
+app.use("/room",roomRoute);
+app.use("/book",jwtCheck,bookRoute);
 app.use(anonymousRoute);
-
+const connectDB = require('./utils/db');
 connectDB();
 
 app.listen(PORT, () => {

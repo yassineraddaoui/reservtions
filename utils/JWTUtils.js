@@ -2,9 +2,10 @@
 const jwt=require('jsonwebtoken')
 
 const getDecodedToken = (token)=> {
+    token="Bearer "+token
     const tokenValue = token.split(' ')[1];
-    const decodedToken = jwt.verify(tokenValue, process.env.SECRET_KEY);    
-    return decodedToken;
+       
+    return jwt.verify(tokenValue, process.env.SECRET_KEY); 
 }
 
 const generateToken = (user)=>{
@@ -29,5 +30,17 @@ const verifyToken = (token)=>{
     jwt.verify(tokenValue, process.env.SECRET_KEY);
     return true;
 }
-module.exports = { generateToken, verifyToken,getDecodedToken };
+const extractJwt = (req,res)=>{
+    const { headers: { cookie } } = req;
+    if (cookie) {
+        const values = cookie.split(';').reduce((res, item) => {
+            const data = item.trim().split('=');
+            return { ...res, [data[0]]: data[1] };
+        }, {});
+        return values.token;
+    }
+    else
+        res.status(401).render('/404');
+}
+module.exports = {extractJwt, generateToken, verifyToken,getDecodedToken };
 
