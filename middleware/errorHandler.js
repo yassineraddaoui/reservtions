@@ -1,6 +1,6 @@
 
 const ErrorHandler = (err, req, res, next) => {
-    console.log('Error Handler !');
+    console.log(err)
     res.render('404');
 }
 

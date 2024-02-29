@@ -36,7 +36,7 @@ exports.getSignUp = async (req, res) => {
 }
 exports.getIndex = async (req, res) => {
     try {
-        res.render('index');
+        res.render('index.ejs');
     } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
