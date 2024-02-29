@@ -2,7 +2,7 @@ const Book = require('../models/booking');
 const Room = require('../models/room');
 const jwtHelper = require('../utils/JWTUtils');
 const sendEmail = require('../services/mail');
-const generateOTP = require('../utils/OTPGenerator');
+const OTPHelper = require('../utils/OTPGenerator');
 const ejs = require('ejs'); // Import the 'ejs' module
 
 exports.showBookForm = async (req, res) => {
@@ -24,6 +24,8 @@ exports.showConfirmForm = async (req, res) => {
 exports.confirmBooking = async (req, res) => {
     try {
         const confirmCode = req.params.confirmCode;
+        if(OTPHelper.verifyToken(confirmCode))
+        res.render('404');
         const book = await Book.findOne({ confirmCode: confirmCode });
 
         if (book && book.confirmCode === confirmCode) {
@@ -71,8 +73,8 @@ exports.createBook = async (req, res) => {
         const token = jwtHelper.extractJwt(req);
         const userData = jwtHelper.getDecodedToken(token);
         const { id, email } = userData;
-
-        const confirmCode= String(await generateOTP());
+        
+        const confirmCode= String(OTPHelper.generateSecret());
         const book = new Book({
             user: id,
             dates: hours,

@@ -1,12 +1,20 @@
+const speakeasy = require('speakeasy');
 
-const generateOTP = async () => {
+function generateSecret() {
+    speakeasy.generateSecret();
+    return speakeasy.generateSecret().base32;
 
-    let digits = 
-'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+';
-    let OTP = '';
-    for (let i = 0; i < 6; i++) {
-        OTP += digits[Math.floor(Math.random() * 10)];
-    }
-    return OTP;
 }
-module.exports = generateOTP;
+
+function verifyToken(token) {
+    var secret=process.env.SECRET_KEY;
+    return  speakeasy.totp.verify({
+        secret,
+        encoding: 'base32',
+        token,
+        window: 1
+      });
+  
+    }
+
+module.exports = { generateSecret, verifyToken };
