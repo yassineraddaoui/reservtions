@@ -97,16 +97,15 @@ header .current-date{
   transform: translate(-50%, -50%);
 }
 .days li.active::before{
-  background: #bd811b;
+  background: #FF4400;
 }
 .days li:not(.active):hover::before{
   background: #f2f2f2;
 }
 
 .available-hours button.selected {
-  background-color: #ffcc00; /* Yellow */
-  color: #333; /* Dark text color */
-}
+  background-color: #A5DD9B;
+  }
 .available-hours {
   display: none;
   background-color: #f0f0f0;
@@ -117,10 +116,10 @@ header .current-date{
 }
 
 .available-hours button {
-  background-color: #cea40e; /* Green */
+  background-color: #ff4400b4;
   border: none;
   color: white;
-  padding: 10px 20px;
+  padding: 10px 20px; 
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -131,9 +130,13 @@ header .current-date{
 }
 
 .available-hours button:hover {
-  background-color: #45a049;
+  background-color: #C5EBAA;
 }
 
 .available-hours button:active {
-  background-color: #3e8e41;
+  background-color: #A5DD9B;
+}
+
+.btn-book{
+  color: #053782;
 }

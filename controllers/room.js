@@ -27,16 +27,16 @@ exports.getRoomById = async (req, res) => {
 
 exports.getAddRoomForm = async (req, res) => {
   try {
-    return res.render('administrator/addRoom')
+    return res.render('administrator/addRoom',{loggedIn: true})
   } catch (error) {
-    return res.render('404')
+    return res.render('404',{loggedIn: true })
 
   }
 };
 exports.getAllRooms = async (req, res) => {
   try {
     const rooms = await Room.find();
-    res.render('rooms', { rooms: rooms });
+    res.render('rooms', { rooms: rooms ,loggedIn:true});
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

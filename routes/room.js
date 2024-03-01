@@ -3,15 +3,14 @@ const roomController = require("../controllers/room");
 const router = express.Router();
 const multer = require("multer");
 const upload = multer({ dest: "public/new/uploads/" });
-const isAdmin = require('../middleware/roleCheck')
-const isLoggedIn = require('../middleware/jwtcheck')
+const loggedInAs = require('../middleware/roleCheck')
 
 
 router.get('/', roomController.getAllRooms);
 
-router.get('/add',isAdmin('admin') ,roomController.getAddRoomForm);
+router.get('/add',loggedInAs('admin') ,roomController.getAddRoomForm);
 
-router.post('/available',isLoggedIn ,roomController.getAvailableRooms);
+router.post('/available',loggedInAs('user') ,roomController.getAvailableRooms);
 
 router.get('/hours/:roomNumber/:date', roomController.getRoomAvailbleHours);
 
@@ -21,10 +20,10 @@ router.get('/:roomNumber', roomController.getRoomByRoomNumber);
 
 router.get('/id/:id', roomController.getRoomById);
 
-router.post('/',upload.single('roomImage') ,isAdmin,roomController.createRoom);
+router.post('/',upload.single('roomImage') ,loggedInAs('admin'),roomController.createRoom);
 
-router.patch('/:roomNumber', isAdmin,roomController.updateRoom);
+router.patch('/:roomNumber', loggedInAs('admin'),roomController.updateRoom);
 
-router.delete('/:roomNumber', isAdmin,roomController.deleteRoom);
+router.delete('/:roomNumber', loggedInAs('admin'),roomController.deleteRoom);
 
 module.exports = router;

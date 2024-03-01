@@ -36,7 +36,11 @@
             </ul>
 
             <div class="d-none d-lg-block">
-                <a href="signin" class="bi-person custom-icon me-3"></a>
+                <% if(loggedIn){ %>
+                    <a href="http://localhost:5000/logout" class="bi-box-arrow-right custom-icon me-3"></a>
+                    <% } else{ %> 
+                        <a href="signin" class="bi-person custom-icon me-3"></a> 
+                 <% } %>
 
             </div>
         </div>

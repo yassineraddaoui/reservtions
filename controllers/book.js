@@ -3,11 +3,11 @@ const Room = require('../models/room');
 const jwtHelper = require('../utils/JWTUtils');
 const sendEmail = require('../services/mail');
 const OTPHelper = require('../utils/OTPGenerator');
-const ejs = require('ejs'); // Import the 'ejs' module
+const ejs = require('ejs'); 
 
 exports.showBookForm = async (req, res) => {
     try {
-        res.render('user/book');
+        res.render('user/book',{loggedIn: true });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -15,7 +15,7 @@ exports.showBookForm = async (req, res) => {
 
 exports.showConfirmForm = async (req, res) => {
     try {
-        res.render('user/confirm');
+        res.render('user/confirm',{loggedIn : true});
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -31,12 +31,12 @@ exports.confirmBooking = async (req, res) => {
         if (book && book.confirmCode === confirmCode) {
             book.confirmCode = '';
             await book.save();
-            res.render('user/confirmed');
+            res.render('user/confirmed',{loggedIn: true});
         } else {
-            res.render('404');
+            res.render('404',{loggedIn:true});
         }
     } catch (error) {
-        res.render('404')
+        res.render('404',{loggedIn : true})
         res.status(500).json({ success: false, message: error.message });
     }
 };

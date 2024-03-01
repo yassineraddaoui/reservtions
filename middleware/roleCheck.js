@@ -9,16 +9,17 @@ const verifyRole = (requiredRole) => (req, res, next) => {
                 next();
             }
             else {
-                res.render('404');
+                res.render('sign-in',{loggedIn: false });
             }
-    
         }
         else {
-            res.render('404');
+            res.render('sign-in',{loggedIn: false });
         }
     } catch (error) {
+        res.render('404',{loggedIn: false });
         next(error)
     }
 }
+
 
 module.exports = verifyRole;

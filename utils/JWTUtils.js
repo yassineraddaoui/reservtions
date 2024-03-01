@@ -40,7 +40,7 @@ const extractJwt = (req,res)=>{
         return values.token;
     }
     else
-        res.status(401).render('/404');
+        res.status(401).render('/404',{loggedIn: false });
 }
 module.exports = {extractJwt, generateToken, verifyToken,getDecodedToken };
 

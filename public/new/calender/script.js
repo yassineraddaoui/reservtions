@@ -96,7 +96,7 @@ const renderCalendar = () => {
             capacity.innerText = `Capacity: ${room.capacity}`;
             roomCard.appendChild(capacity);
             const button = document.createElement("button");
-            button.classList.add("btn", "btn-primary");
+            button.classList.add("btn", "btn-book");
             button.innerText = "Book Room";
             button.onclick = function () {
               openForm(room._id,day.getAttribute("data-date"));
@@ -169,7 +169,7 @@ function openForm(roomId,date) {
       // Display available hours as clickable buttons
       availableHours.forEach(hour => {
         const button = document.createElement('button');
-        button.textContent = new Date(hour).getHours() ;
+        button.textContent = new Date(hour).getHours() + ' : 00' ;
         button.addEventListener('click', () => {
           button.classList.toggle('selected');
         });
@@ -188,7 +188,6 @@ function closeForm() {
 }
 
 function submitHours() {
-  // Get all buttons that are currently selected
   const selectedButtons = document.querySelectorAll('button.selected');
   const selectedDate = document.querySelectorAll('li.active')[0].getAttribute("data-date");
 
@@ -201,7 +200,7 @@ function submitHours() {
   let hoursData = [];
   selectedButtons.forEach(button => {
     let d = new Date(selectedDate);
-    d.setHours(button.textContent);
+    d.setHours(button.textContent.replace(' : 00', ''));
     d.setMinutes(0);
     d.setSeconds(0);
     hoursData.push(d);

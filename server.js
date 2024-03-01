@@ -4,15 +4,15 @@ const bodyParser =require('body-parser')
 app.use(express.static('public/new'));
 app.set('view engine','ejs')
 
-const jwtCheck=require('./middleware/jwtcheck')
+const loggedInAs=require('./middleware/roleCheck')
 const errorHandler = require("./middleware/errorHandler");
 
 require('dotenv').config();
 const PORT = process.env.PORT || 5000; 
 app.use(bodyParser.urlencoded({extended:true})); 
 app.use(express.json());
-
-
+var cookieParser = require('cookie-parser')
+app.use(cookieParser())
 const emailRouter = require('./controllers/mail'); 
 app.use('/api', emailRouter); 
 
@@ -25,7 +25,7 @@ const bookRoute = require('./routes/book');
 
 app.use(authRoute);
 app.use("/room",roomRoute);
-app.use("/book",jwtCheck,bookRoute);
+app.use("/book",loggedInAs('user'),bookRoute);
 app.use(anonymousRoute);
 const connectDB = require('./utils/db');
 connectDB();
