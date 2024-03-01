@@ -17,7 +17,7 @@ const verifyRole = (requiredRole) => (req, res, next) => {
         }
     } catch (error) {
         res.render('404',{loggedIn: false });
-        next(error)
+            next(error)
     }
 }
 

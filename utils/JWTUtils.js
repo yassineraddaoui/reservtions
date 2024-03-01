@@ -31,16 +31,7 @@ const verifyToken = (token)=>{
     return true;
 }
 const extractJwt = (req,res)=>{
-    const { headers: { cookie } } = req;
-    if (cookie) {
-        const values = cookie.split(';').reduce((res, item) => {
-            const data = item.trim().split('=');
-            return { ...res, [data[0]]: data[1] };
-        }, {});
-        return values.token;
-    }
-    else
-        res.status(401).render('/404',{loggedIn: false });
+        return req.cookies.token
 }
 module.exports = {extractJwt, generateToken, verifyToken,getDecodedToken };
 
