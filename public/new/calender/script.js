@@ -99,7 +99,7 @@ const renderCalendar = () => {
             button.classList.add("btn", "btn-book");
             button.innerText = "Book Room";
             button.onclick = function () {
-              openForm(room._id,day.getAttribute("data-date"));
+              openForm(room,day.getAttribute("data-date"));
             };
             roomCard.appendChild(button);
 
@@ -146,14 +146,14 @@ prevNextIcon.forEach((icon) => {
 });
 
 
-function openForm(roomId,date) {
-  pickedRoom=roomId;
+function openForm(room,date) {
+  pickedRoom=room._id;
   let hoursContainer = document.getElementById('available-hours');
   hoursContainer.innerHTML='';
   let availableHours=[]
 
   var req = new XMLHttpRequest();
-  const apiUrl = `http://localhost:5000/room/hours/${roomId}/${date}`;
+  const apiUrl = `http://localhost:5000/room/hours/${pickedRoom}/${date}`;
   req.open("GET", apiUrl);
   req.setRequestHeader("Content-Type", "application/json");
   req.onload = function () {
@@ -164,7 +164,19 @@ function openForm(roomId,date) {
       console.log('Error');
     }
 
+
     document.getElementById("popupForm").style.display = "block";
+    const selectedRoomImage = document.createElement("img");
+    selectedRoomImage.classList.add('selectedRoom');
+
+    const capacityP = document.createElement("p");
+    capacityP.textContent = 'Capacity :' +room.capacity
+
+
+    hoursContainer.appendChild(selectedRoomImage)
+    hoursContainer.appendChild(capacityP)
+
+    selectedRoomImage.src = room.roomImage;
     if (availableHours) {
       // Display available hours as clickable buttons
       availableHours.forEach(hour => {
