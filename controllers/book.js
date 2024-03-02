@@ -5,11 +5,38 @@ const sendEmail = require('../services/mail');
 const OTPHelper = require('../utils/OTPGenerator');
 const ejs = require('ejs'); 
 
+exports.cancelReservation = async(req,res) =>{
+    var id = req.body.bookingId ; 
+    const updatedBooking = await Book.findByIdAndUpdate(id, { canceled: true });
+
+    res.status(200).json({ success: true, message: `success` });
+}
+exports.getUserBooks = async (req, res) => {
+    const token = jwtHelper.extractJwt(req);
+    const userData = jwtHelper.getDecodedToken(token);
+    const userId = userData.id;
+
+    try {
+        let userBookings = await Book.find({ user: userId }).populate('room');
+        
+        userBookings = userBookings.map(booking => ({
+            ...booking.toObject(),
+            confirmCode: booking.confirmCode ? false : true
+        }));
+        res.render('user/roomBooked',{loggedIn: true,books:userBookings });
+
+    } catch (error) {
+        console.log(error);
+        res.render('404');
+    }
+};
+
+  
 exports.showBookForm = async (req, res) => {
     try {
         res.render('user/book',{loggedIn: true });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.render('404',{loggedIn : true});
     }
 };
 
@@ -17,7 +44,7 @@ exports.showConfirmForm = async (req, res) => {
     try {
         res.render('user/confirm',{loggedIn : true});
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        res.render('404',{loggedIn : true});
     }
 };
 

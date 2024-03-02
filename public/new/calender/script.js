@@ -2,12 +2,11 @@ const daysTag = document.querySelector(".days");
 const currentDate = document.querySelector(".current-date");
 const prevNextIcon = document.querySelectorAll(".icons span");
 let pickedRoom = null;
-// getting new date, current year and month
+
 let date = new Date();
 let currYear = date.getFullYear();
 let currMonth = date.getMonth();
 
-// storing full name of all months in array
 const months = [
   "January",
   "February",

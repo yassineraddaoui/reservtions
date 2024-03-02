@@ -6,6 +6,7 @@ const bookingSchema = new mongoose.Schema({
   dates: { type: [Date], required: true },
   bookingDate: { type: Date, required: true },
   confirmCode : { type:String,required:false},
+  canceled : { type:Boolean,required:true,default:false},
 });
 
 module.exports = mongoose.model('Booking', bookingSchema);
