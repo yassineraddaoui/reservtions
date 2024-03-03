@@ -19,10 +19,9 @@ exports.cancelReservation = async(req,res) =>{
     //const updatedBooking = await Book.findByIdAndUpdate(id, { canceled: true });
     const updatedBooking = await Book.findById(id).populate('user');
     const {user , _id} = updatedBooking;
-    console.log(user)
     const cancelUrl = `http://localhost:5000/book/cancel/${_id}`; 
 
-    const emailTemplate = await ejs.renderFile('views/user/confirmCancel.ejs',{cancelUrl});
+    const emailTemplate = await ejs.renderFile('views/user/confirmCancelMail.ejs',{cancelUrl});
 
     const emailContent = emailTemplate.replace('{{cancelUrl}}', cancelUrl);
 
@@ -131,10 +130,9 @@ exports.createBook = async (req, res) => {
             confirmCode: confirmCode
         });
         const roomBooked = await book.save();;
-        console.log(roomBooked)
         const confirmationUrl = `http://localhost:5000/book/confirm/${confirmCode}`; 
 
-        const emailTemplate = await ejs.renderFile('views/otpCode.ejs',{confirmationUrl,bookingDate});
+        const emailTemplate = await ejs.renderFile('views/user/confirmBookingMail.ejs',{confirmationUrl,bookingDate});
 
         let emailContent = emailTemplate.replace('{{confirmationUrl}}', confirmationUrl);
         emailContent = emailTemplate.replace('{{bookingDate}}', bookingDate);
