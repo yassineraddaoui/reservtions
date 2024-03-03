@@ -66,7 +66,7 @@
             <% books.forEach((booking)=> { %>
 
 
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" data-card-id="<%= booking._id %>">
                     <div class="card">
                         <img src="<%= '/'+booking.room.roomImage.replace(/\\/g, '/') %>" class="card-img-top" alt="">
 
@@ -93,14 +93,16 @@
                                         <i class="fa-solid fa-circle-xmark" style="color: #ff4400;"></i> Not Confirmed
                                         <% } %>
                             </p>
+                            <% if (booking.canceled===false) { %>
                             <button class="close-btn align-self-end btn cancel-btn" data-booking-id="<%= booking._id %>">
-                                <% if (booking.canceled===false) { %>
+                               
                                 Cancel Reservation
+                            </button>
+
                                 <% } else { %>
-                                OK
+                                    <button class="close-btn align-self-end btn cancel-btn" disabled> canceled</button>
                                 <% } %>
 
-                            </button>
                         </div>
                         </div>
                     </div>
@@ -109,23 +111,22 @@
         </div>
     </div>
     <script>
-        // Assuming you're using jQuery for simplicity
+
         $(document).ready(function() {
             $('.cancel-btn').click(function() {
                 var bookingId = $(this).data('booking-id');
+                var cardId = $(this).data('card-id');
 
-                // Make an API call to cancel reservation using AJAX
+
                 $.ajax({
                     url: '/book/cancel',
                     method: 'POST',
                     data: { bookingId: bookingId },
                     success: function(response) {
-                        // Handle success response
                         console.log('Reservation canceled successfully');
-                         $(this).closest('.card').remove();
+                        $(this).closest(cardId).remove();
                     },
                     error: function(xhr, status, error) {
-                        // Handle error response
                         console.error('Error canceling reservation:', error);
                     }
                 });

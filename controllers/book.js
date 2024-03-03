@@ -5,9 +5,29 @@ const sendEmail = require('../services/mail');
 const OTPHelper = require('../utils/OTPGenerator');
 const ejs = require('ejs'); 
 
+exports.confirmCancellation = async(req,res) => {
+     try {
+        const id= req.params.id;
+        await Book.findByIdAndUpdate(id, { canceled: true });   
+        this.getUserBooks(req,res);
+    } catch (error) {
+        console.log(error);
+        res.render('404',{loggedIn : true});
+    }}
 exports.cancelReservation = async(req,res) =>{
     var id = req.body.bookingId ; 
-    const updatedBooking = await Book.findByIdAndUpdate(id, { canceled: true });
+    //const updatedBooking = await Book.findByIdAndUpdate(id, { canceled: true });
+    const updatedBooking = await Book.findById(id).populate('user');
+    const {user , _id} = updatedBooking;
+    console.log(user)
+    const cancelUrl = `http://localhost:5000/book/cancel/${_id}`; 
+
+    const emailTemplate = await ejs.renderFile('views/user/confirmCancel.ejs',{cancelUrl});
+
+    const emailContent = emailTemplate.replace('{{cancelUrl}}', cancelUrl);
+
+    sendEmail(user.email, "Book Cancellation Confirm", "html", emailContent);
+    console.log(updatedBooking)
 
     res.status(200).json({ success: true, message: `success` });
 }
@@ -102,23 +122,25 @@ exports.createBook = async (req, res) => {
         const { id, email } = userData;
         
         const confirmCode= String(OTPHelper.generateSecret());
+        const bookingDate = new Date();
         const book = new Book({
             user: id,
             dates: hours,
             room: roomId,
-            bookingDate: new Date(),
+            bookingDate: bookingDate,
             confirmCode: confirmCode
         });
-
+        const roomBooked = await book.save();;
+        console.log(roomBooked)
         const confirmationUrl = `http://localhost:5000/book/confirm/${confirmCode}`; 
 
-        const emailTemplate = await ejs.renderFile('views/otpCode.ejs',{confirmationUrl});
+        const emailTemplate = await ejs.renderFile('views/otpCode.ejs',{confirmationUrl,bookingDate});
 
-        const emailContent = emailTemplate.replace('{{confirmationUrl}}', confirmationUrl);
+        let emailContent = emailTemplate.replace('{{confirmationUrl}}', confirmationUrl);
+        emailContent = emailTemplate.replace('{{bookingDate}}', bookingDate);
 
         sendEmail(email, "Book Confirmation", "html", emailContent);
 
-        await book.save();
 
         return res.status(201).json({
             success: true,
