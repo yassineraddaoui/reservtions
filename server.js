@@ -27,6 +27,10 @@ app.use(authRoute);
 app.use("/room",roomRoute);
 app.use("/book",loggedInAs('user'),bookRoute);
 app.use(anonymousRoute);
+app.get("*", (req, res) => {
+    res.render("404",{loggedIn:req.cookies.token});   
+});
+
 const connectDB = require('./utils/db');
 connectDB();
 
