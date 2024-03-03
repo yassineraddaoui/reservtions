@@ -11,8 +11,7 @@ exports.confirmCancellation = async(req,res) => {
         await Book.findByIdAndUpdate(id, { canceled: true });   
         this.getUserBooks(req,res);
     } catch (error) {
-        console.log(error);
-        res.render('404',{loggedIn : true});
+        next(err)
     }}
 exports.cancelReservation = async(req,res) =>{
     var id = req.body.bookingId ; 

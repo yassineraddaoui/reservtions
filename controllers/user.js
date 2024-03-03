@@ -6,22 +6,23 @@ exports.loginForm = async (req, res) => {
   try {
     res.render('sign-in',{loggedIn:false});
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Internal Server Error 500');
+    next(err)
   }
 }
 exports.signupForm = async (req, res) => {
   try {
     res.render('sign-up',{loggedIn:false});
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Internal Server Error');
+    next(err)
   }
 }
 exports.logout = (req, res, next) => {
-  res.clearCookie('token');
-  res.render('sign-in',{loggedIn:false})
-
+  try {
+    res.clearCookie('token');
+    res.render('sign-in',{loggedIn:false})
+    } catch (err) {
+    next(err)
+  }
 }
 exports.signup = (req, res, next) => {
 
@@ -35,16 +36,12 @@ exports.signup = (req, res, next) => {
       });
       user.save().then(
         () => {
-          res.status(201).json({
-            message: 'User added successfully!',
-            token: jwtHelper.generateToken(user)
-          });
-        }
+          let tk = jwtHelper.generateToken(user);
+          res.cookie('token', tk).render('index',{loggedIn:true});
+      }
       ).catch(
         (error) => {
-          res.status(500).json({
-            error: error
-          });
+          res.render('sign-up',{loggedIn:false,message:'Invalide Data'});
         }
       );
     }
@@ -52,41 +49,29 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
+  let jwtToken;
   User.findOne({ email: req.body.email }).then(
     (user) => {
       if (!user) {
-        return res.status(401).json({
-          error: new Error('User not found!')
-        });
+        res.render('sign-in',{loggedIn:false});
       }
       bcrypt.compare(req.body.password, user.password).then(
         (valid) => {
           if (!valid) {
-            console.log(error)
-            return res.render('404',{loggedIn:false})
+            return res.render('sign-in',{loggedIn:false,message:'Invalide Data'})
           }
-          let tk;
-          try {
-            tk = jwtHelper.generateToken(user);
-            res.cookie('token', tk).render('index',{loggedIn:true});
-          } catch (err) {
-            console.log(error)
-
-            return res.render('404',{loggedIn:false})
-          }
+            jwtToken = jwtHelper.generateToken(user);
+            res.cookie('token', jwtToken).render('index',{loggedIn:true}); 
         }
       ).catch(
         (error) => {
-          console.log(error)
-
-          return res.render('404',{loggedIn:false})
+          next(error);
         }
       );
     }
   ).catch(
     (error) => {
-      console.log(error)
-      return res.render('404',{loggedIn:false})
+      next(error);
     }
   );
 }

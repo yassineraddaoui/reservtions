@@ -1,5 +1,5 @@
 const jwtHelper = require('../utils/JWTUtils')
-const verifyRole = (requiredRole) => (req, res, next) => {
+const verifyRole = (requiredRole) =>  (req, res, next) => {
     console.log("Check Roles")
     try {
         const token=jwtHelper.extractJwt(req);  
@@ -9,15 +9,14 @@ const verifyRole = (requiredRole) => (req, res, next) => {
                 next();
             }
             else {
-                res.render('sign-in',{loggedIn: false });
+                res.render('index',{loggedIn: true });
             }
         }
         else {
             res.render('sign-in',{loggedIn: false });
         }
     } catch (error) {
-        res.render('404',{loggedIn: false });
-            next(error)
+        res.render('sign-in',{loggedIn: false });
     }
 }
 
