@@ -1,20 +1,40 @@
 const Room = require('../models/room');
 const Book = require('../models/booking');
 
+
 exports.createRoom = async (req, res) => {
   try {
+    const { equipments,capacity, roomNumber } = req.body;
+    const roomImage =  req.file.path.replace("public\\new\\", "") ;
+
+
+    const equipmentArray = [];
+
+    if (equipments && equipments.length > 0) {
+      equipments.forEach(equipment => {
+        equipmentArray.push({
+          name: equipment.name,
+          quantity: equipment.quantity
+        });
+      });
+    }
+
     const room = new Room({
-      capacity: req.body.capacity,
-      roomNumber: req.body.roomNumber,
-      roomImage: req.file.path.replace("public\\new\\", "")
+      capacity,
+      roomNumber,
+      roomImage,
+      equipment: equipmentArray 
     });
 
     const savedRoom = await room.save();
+
     res.status(201).json(savedRoom);
   } catch (error) {
-    res.status(500).json({ error: error.message }); // Send an error response if there's an error
+    res.status(500).json({ error: error.message });
   }
 };
+
+
 exports.getRoomById = async (req, res) => {
   try {
     const room = await Room.findOne({ _id: req.params.id });
@@ -53,7 +73,7 @@ exports.getAvailableRooms = async (req, res) => {
     }
     let bookingDate = new Date(date); //time Zone diffrence 
     const startOfDay = new Date(bookingDate);
-    startOfDay.setHours(8, 0, 0, 0); // Set start time to 8:00 AM
+    startOfDay.setHours(9, 0, 0, 0); // Set start time to 8:00 AM
     const endOfDay = new Date(bookingDate);
     endOfDay.setHours(18, 0, 0, 0); // Set end time to 5:00 PM
     const availableRooms = [];

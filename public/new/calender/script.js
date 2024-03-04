@@ -94,8 +94,15 @@ const renderCalendar = () => {
             const capacity = document.createElement("p");
             capacity.innerText = `Capacity: ${room.capacity}`;
             roomCard.appendChild(capacity);
+            // Equipment
+            // room.equipment.forEach((equip) => {
+            //   let equipmentInfo = document.createElement("p");
+            //   equipmentInfo.classList.add("card-text");
+            //   equipmentInfo.innerText = `${equip.name}: ${equip.quantity}`;
+            //   roomCard.appendChild(equipmentInfo);
+            // });
             const button = document.createElement("button");
-            button.classList.add("btn", "btn-book");
+            button.classList.add("btn", "primary");
             button.innerText = "Book Room";
             button.onclick = function () {
               openForm(room,day.getAttribute("data-date"));
@@ -145,11 +152,11 @@ prevNextIcon.forEach((icon) => {
 });
 
 
-function openForm(room,date) {
-  pickedRoom=room._id;
+function openForm(room, date) {
+  pickedRoom = room._id;
   let hoursContainer = document.getElementById('available-hours');
-  hoursContainer.innerHTML='';
-  let availableHours=[]
+  hoursContainer.innerHTML = '';
+  let availableHours = []
 
   var req = new XMLHttpRequest();
   const apiUrl = `http://localhost:5000/room/hours/${pickedRoom}/${date}`;
@@ -158,41 +165,48 @@ function openForm(room,date) {
   req.onload = function () {
     if (req.status == 200) {
       responseData = JSON.parse(req.responseText);
-       availableHours = responseData.availableHours;
+      availableHours = responseData.availableHours;
     } else {
       console.log('Error');
     }
-
-
     document.getElementById("popupForm").style.display = "block";
     const selectedRoomImage = document.createElement("img");
     selectedRoomImage.classList.add('selectedRoom');
-
+ 
     const capacityP = document.createElement("p");
-    capacityP.textContent = 'Capacity :' +room.capacity
+    capacityP.textContent = 'Capacity :' + room.capacity
 
 
-    hoursContainer.appendChild(selectedRoomImage)
-    hoursContainer.appendChild(capacityP)
+    hoursContainer.appendChild(selectedRoomImage);
+    // Equipment
+    room.equipment.forEach((equip) => {
+      let equipmentInfo = document.createElement("p");
+      equipmentInfo.classList.add("card-text");
+      equipmentInfo.innerText = `${equip.name}: ${equip.quantity}`;
+      hoursContainer.appendChild(equipmentInfo);
+    });
+    hoursContainer.appendChild(capacityP);
+
 
     selectedRoomImage.src = room.roomImage;
-    if (availableHours) {
+    
+    if (availableHours.length>0) {
       // Display available hours as clickable buttons
       availableHours.forEach(hour => {
         const button = document.createElement('button');
-        button.textContent = new Date(hour).getHours() + ' : 00' ;
+        button.textContent = new Date(hour).getHours() + ' : 00';
         button.addEventListener('click', () => {
           button.classList.toggle('selected');
         });
         hoursContainer.appendChild(button);
       });
     } else {
-      hoursContainer.textContent = 'No available slots for this date.'; 
+      hoursContainer.textContent = 'No available slots for this date.';
     }
     document.getElementById("available-hours").style.display = "block";
 
   };
-  req.send(); // Add this line to actually send the request
+  req.send();
 }
 function closeForm() {
   document.getElementById("popupForm").style.display = "none";
@@ -219,7 +233,7 @@ function submitHours() {
 
   const requestData = {
     hours: hoursData,
-    roomId: pickedRoom 
+    roomId: pickedRoom
   };
 
   const req = new XMLHttpRequest();
@@ -231,7 +245,7 @@ function submitHours() {
       const responseData = JSON.parse(req.responseText);
       console.log(JSON.stringify(requestData))
       window.location.replace("http://localhost:5000/book/confirm");
-      
+
     } else {
       console.log('Error:', req.statusText);
     }
